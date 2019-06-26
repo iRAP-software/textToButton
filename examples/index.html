@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>textToButton example</title>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="jquery.textToButton.min.js"></script>
+		<style type="text/css">
+			.button {
+				background: none;
+				border: 1px solid #ccc;
+				box-sizing: border-box;
+				padding: 3px 5px;
+				width: 200px;
+			}
+			.left {
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+	<input type="text" id="input1" class="button">
+	<script type="text/javascript">
+		$('document').ready(function () {
+			$('#input1').blur(function () {
+				var text = $('#input1').val();
+				$('#input1').textToButton(
+					text ? text : 'Nothing',
+					{
+						classNames: 'button left',
+						closeIcon: true
+					}
+				);
+			});
+		});
+	</script>
+	</body>
+</html>
