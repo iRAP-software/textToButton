@@ -1,45 +1,74 @@
+/*
+ * jquery.textToButton.js v1.1 2019-07-23
+ * https://github.com/iRAP-software/textToButton
+ */
 (function ($) {
+
+    var defaultText = 'textToButton';
 
     var defaults = {
         classNames: '',
-        closeIcon: false
+        closeIcon: false,
+        text: defaultText
     };
 
-    $.fn.textToButton = function (text, opts) {
+    $.fn.textToButton = function (textOrMethod, opts) {
 
         var textField = this;
-        defaults.classNames = textField.attr('class');
+        var button, icon;
 
-        $.extend(defaults, opts);
+        var methods = {
+            init: function () {
+                defaults.classNames = textField.attr('class');
 
-        var button = $('<button type="button">');
-        button.html(text);
-        button.addClass(defaults.classNames);
+                $.extend(defaults, opts);
 
-        if(defaults.closeIcon) {
-            var icon = $('<span class="close">');
-            icon.html('&times;').css('float', 'right');
-            icon.appendTo(button);
-        }
+                if(typeof defaults.text === 'undefined' || defaults.text === '') defaults.text = defaultText;
 
-        button.click(function () {
-            $(this).fadeOut(100, function () {
-                textField.fadeIn(100, function () {
-                    $(this).focus();
+                button = $('<button type="button">');
+                button.html(methods[textOrMethod] ? defaults.text : textOrMethod);
+                button.addClass(defaults.classNames);
+                button.attr('data-ttb', '');
+
+                if (defaults.closeIcon) {
+                    icon = $('<span class="close">');
+                    icon.html('&times;').css('float', 'right');
+                    icon.appendTo(button);
+                }
+
+                button.click(function () {
+                    $(this).fadeOut(100, function () {
+                        textField.fadeIn(100, function () {
+                            $(this).focus();
+                        });
+                        $(this).remove();
+                    });
                 });
-                $(this).remove();
-            });
-        });
 
-        button.css({'display': 'none', 'cursor': 'text'});
+                button.css({'display': 'none', 'cursor': 'text'});
 
-        this.after(button);
+                textField.next('button[data-ttb]').remove();
 
-        this.fadeOut(100, function () {
-            button.fadeIn(100);
-        });
+                textField.after(button);
 
-        return this;
+                textField.fadeOut(100, function () {
+                    button.fadeIn(100);
+                });
+
+                return textField;
+            },
+            clear: function () {
+                button = textField.next('button');
+                button.trigger('click');
+                return textField;
+            }
+        };
+
+        if(methods[textOrMethod]) {
+            return methods[textOrMethod].apply(this);
+        } else {
+            return methods.init();
+        }
 
     };
 
